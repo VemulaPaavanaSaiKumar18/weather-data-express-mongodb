@@ -4,14 +4,14 @@ var router = express.Router();
 const constrol = require("../src/routerController");
 
 /* GET users listing. */
-router.get("/", function (req, res, next) {
+router.get("/", (req, res, next) => {
   res.send("respond with a resource");
 });
-router.get("/all", async (req, res) => {
+router.get("/all", (req, res, next) => {
   constrol.getAllWeatherData(req, res);
 });
 
-router.post("/", function (req, res, next) {
+router.post("/", (req, res, next) => {
   constrol.createWeatherData(req, res);
 });
 
