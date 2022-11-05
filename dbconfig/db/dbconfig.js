@@ -1,7 +1,7 @@
 let mongoose = require("mongoose");
-const config = require("../../config/config");
+require("dotenv").config();
 
-mongoose.connect(config.dbname, (err, res) => {
+mongoose.connect(process.env.dbname, (err, res) => {
   if (err) {
     console.log("getting error in db" + err);
   } else {
