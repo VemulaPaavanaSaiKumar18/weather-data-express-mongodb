@@ -3,8 +3,11 @@ const WeatherData = require("../dbconfig/model/WeatherDataSchema");
 const config = require("../config/config");
 const createWeatherData = async (req, res) => {
   let city = req.body.cityName;
+  // const url = `https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=ea6e72aba7d75fbbf6be2aedc208af98&units=metric`;
   try {
-    const response = await axios.get(config.apiurl);
+    const response = await axios.get(
+      `${config.apiurl}?q=${city}&appid=${config.appid}&units=${config.units}`
+    );
     if ("data" in response) {
       let data = response.data;
       const wether = new WeatherData({
