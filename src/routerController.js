@@ -1,32 +1,43 @@
-const request = require("request");
+const axios = require("axios");
 const WeatherData = require("../dbconfig/model/WeatherDataSchema");
-const createWeatherData = (req, res) => {
-  let city = req.body.cityname;
-  const url = `https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=ea6e72aba7d75fbbf6be2aedc208af98&units=metric`;
-  request(url, async (err, responce, body) => {
-    let data = JSON.parse(body);
-    const wether = new WeatherData({
-      id: data.id,
-      city: data.name,
-      temp: data.main.temp,
-      lat: data.coord.lat,
-      lon: data.coord.lon,
-      timezone: data.timezone,
-    });
-    console.log(wether);
-    try {
-      const data = await wether.save();
-      res.json({
-        Status: 200,
-        Empt: data,
+const config = require("../config/config");
+const createWeatherData = async (req, res) => {
+  let city = req.body.cityName;
+  try {
+    const response = await axios.get(config.apiurl);
+    if ("data" in response) {
+      let data = response.data;
+      const wether = new WeatherData({
+        id: data.id,
+        city: data.name,
+        temp: data.main.temp,
+        lat: data.coord.lat,
+        lon: data.coord.lon,
+        timezone: data.timezone,
       });
-    } catch (err) {
+      console.log(wether);
+      try {
+        const postdata = await wether.save();
+        res.json({
+          Status: 200,
+          data: postdata,
+        });
+      } catch (err) {
+        res.json({
+          Status: 500,
+          error: "server error" + err,
+        });
+      }
+    } else {
       res.json({
-        Status: 500,
-        error: "server error" + err,
+        Status: 404,
+        error: "responce doesn't has property",
       });
     }
-  });
+  } catch (err) {
+    console.log(err);
+    return res.status(404).send(err);
+  }
 };
 
 const getAllWeatherData = async (req, res) => {
@@ -34,7 +45,7 @@ const getAllWeatherData = async (req, res) => {
     const WeatherAll = await WeatherData.find();
     res.json({
       Status: 200,
-      Employee: WeatherAll,
+      data: WeatherAll,
     });
   } catch (err) {
     res.json({

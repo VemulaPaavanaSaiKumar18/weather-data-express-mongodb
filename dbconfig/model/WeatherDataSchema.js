@@ -11,7 +11,7 @@ const WeatherData = new schema({
     required: true,
   },
   temp: {
-    type: Object,
+    type: Number,
   },
   lat: {
     type: Number,
